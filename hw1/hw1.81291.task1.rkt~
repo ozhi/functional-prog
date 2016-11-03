@@ -1,0 +1,28 @@
+#lang racket
+
+(define (isPrime n)
+  (define (isPrimeHelper div) ;;argument 'n' is unneeded and removed because isPrimeHelper is defined in the body of IsPrime
+    (cond
+      [(> (* div div) n) #T]
+      [(zero? (remainder n div)) #F]
+      [else (isPrimeHelper (+ div 1))]
+    )
+  )
+  
+  (if (< n 2)
+      #F
+      (isPrimeHelper 2)
+  )
+)
+
+(define (sumFirstNPrimesGreaterThanK n k) ;;the name is a bit too long but descriptional
+  (define (helper curNum numsSummed sum) ;;arguments 'n' and 'k' are unneeded and removed because helper is defined in the body of sumFirstNPrimesGreaterThanK
+    (cond
+      [(>= numsSummed n) sum]
+      [(or (<= curNum k) (not (isPrime curNum))) (helper (+ curNum 1) numsSummed sum)]
+      [else (helper (+ curNum 1) (+ numsSummed 1) (+ sum curNum))] ;;recursion simulating iteration
+    )
+  )
+
+  (helper 2 0 0)
+)

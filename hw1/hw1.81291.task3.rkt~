@@ -1,0 +1,13 @@
+#lang racket
+
+(define (countDivisors n)
+  (define (helper curNum count)
+    (cond
+      [(> curnum n) count]
+      [(zero? (remainder n curNum)) (helper (+ curNum 1) (+ count 1)]
+      [else (helper (+ curNum 1) count]
+    )
+  )
+
+  (helper 1 0)
+)
