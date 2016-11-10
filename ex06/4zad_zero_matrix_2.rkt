@@ -18,8 +18,6 @@
 )
 
 (define (zero2 matrix)
-
-  
   (define (processRow row)
     (if (equal? #F (member 0 row))
         row
@@ -40,4 +38,4 @@
        (list 1 2 0)
        (list 3 4 1)
        (list 0 5 7)
-       (list 4 2 4))) ; ‘((0 0 0) (3 4 1) (0 0 0) (4 2 4))
+       (list 4 2 4)))
