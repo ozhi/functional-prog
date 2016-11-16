@@ -2,9 +2,7 @@
 
 ;;ok
 
-;Задача 5. Да се дефинират конструктор (make-tree root left-tree right-tree),
-;предикати (empty-tree? tree) и (leaf? tree) и селектори (root tree),
-;(left-tree tree) и (right-tree tree) за работа с двоични дървета.
+;tree-functions + zad 7,8,9,10
 
 (define (make-tree root left-tree right-tree)
   (list root left-tree right-tree))
