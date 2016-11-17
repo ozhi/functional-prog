@@ -10,7 +10,7 @@
 ;списъка се композира с функцията идентитет, която получава един аргумент и го връща без
 ;промяна.
 
-(define (pair-compose fs)
+(define (pair-compose-old fs) ;;when evaluating the seq ot lambdas would be too complicated
   (cond
     [(= 0 (length fs)) (λ (x) x)]
     
@@ -26,12 +26,25 @@
         ((pair-compose (rest (rest fs))) x)))])
 )
 
+(define (pair-compose-new fs) ;;simplified
+  (λ (x)
+   (cond
+    [(= 0 (length fs)) 0]
+    
+    [(= 1 (length fs)) ((first fs) x)]
+    
+    [else (+
+           ((first fs) ((second fs) x))
+           ((pair-compose (rest (rest fs))) x))]) 
+  )
+)
+
+(define pair-compose pair-compose-new)
+
 (define (add1 x) (+ x 1))
 (define (add2 x) (+ x 2))
 (define (mult2 x) (* x 2))
 
 ((pair-compose (list add1 add2)) 1) ;; -> 4
-
-;;(pair-compose (list add1 mult2 mult2 add2))
 ((pair-compose (list add1 mult2 mult2 add2)) 1) ;;(+ (add1 (mult2 1)) (mult2 (add2 1))) -> (+ 3 6) -> 9
 ((pair-compose (list add1 mult2 mult2 add2 add2)) 1) ;; -> 12
