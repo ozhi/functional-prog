@@ -1,6 +1,6 @@
 #lang racket
 
-;;not ok
+;;ok
 
 ;;Задача 5. Да се дефинира функция (all-sums lst), която получава списък lst от не повече от 10
 ;цели неотрицателни числа и връща нов списък, съдържащ сумите на числата във всички
@@ -18,7 +18,7 @@
       
       [(= 1 (length lst)) (list 0 (first lst))]
       
-      [else (let ([all-sums-rest (all-sums (rest lst))])
+      [else (let ([all-sums-rest (all-sums-raw (rest lst))])
               (append
                all-sums-rest
                (map
@@ -44,15 +44,11 @@
   (define (contains-zero? lst)
     (not (empty? (filter zero? lst))))
   
+  (define ans (remove-duplicates (remove-zeros (all-sums-raw lst))))
+  
   (if (contains-zero? lst)  
-      (remove-duplicates (all-sums-raw lst))
-      (remove-duplicates (all-sums-raw lst))
-      );(remove-duplicates (remove-zeros (all-sums-raw lst))))
-
-  (remove-duplicates (all-sums-raw lst))
-  (remove-zeros (all-sums-raw lst))
-  (all-sums-raw lst)
-
+      (cons 0 ans)
+      ans)
 )
 
 (all-sums (list 1 2 3)) ;; → '(1 2 3 4 5 6)
