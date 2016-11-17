@@ -8,18 +8,22 @@
 
 (define (triangular? matrix)
 
-  (define (all-but-first-zeros? lst)
+  (define (all-but-first-zeros-old? lst)
     (cond
       [(< (length lst) 2) #T]
       [(not (zero? (second lst))) #F]
       [else (all-but-first-zeros? (cons 0 (rest (rest lst))))]))
   
+  (define (all-but-first-zeros? lst) ;;better alternative
+    (=
+     (length (rest lst))
+     (length (filter zero? (rest lst)))))
+  
   (cond
     [(empty? matrix) #T]
-    [else
-     (and
-      (all-but-first-zeros? (map first matrix))
-      (triangular? (map rest (rest matrix))))])
+    [else (and
+           (all-but-first-zeros? (map first matrix))
+           (triangular? (map rest (rest matrix))))])
 )
 
 (triangular? '((1 2 3) (0 5 6) (0 0 9))) ;; → #t
