@@ -45,3 +45,6 @@ tree) и (leaf? tree) и селектори (root tree), (left-tree tree) и (ri
 ###[Задача 10.](tree-functions-7-8-9-10.rkt)
 Да се дефинира процедура (add x tree), която добавя елемента x към двоично нареде-
 ното дърво tree с реални числа по върховете.
+
+###[tree-way](tree-way.rkt)
+Given an arbitary (non-ordered) binary tree with unique elements, find a way between two given nodes.
