@@ -21,7 +21,7 @@ compressRLE :: (Eq a) => [a] -> [(a, Int)]
 compressRLE [] = []
 compressRLE (x:xs) = (x, (countXFromBeginning (x:xs))) : (compressRLE (removeXFromBeginning xs))
     where
-    --countXFromBeginning :: [a] -> Int -- why do we have to skip this signature?
+    --countXFromBegcd inning :: [a] -> Int -- why do we have to skip this signature?
     countXFromBeginning [] = 0
     countXFromBeginning (f:fs) =
         if (f == x)
