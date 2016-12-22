@@ -9,6 +9,8 @@ main = do
     print (addMat m1 m2)
     print (transpMat m1)
     print (multiplyMat m1 m3) -- [[10, 10], [26, 26]]
+    
+    print (f [1,2,3] [1,2,3])
 
     -- test the scope of where
 
@@ -49,5 +51,6 @@ multiplyMat m1 m2 = productFirstLine : ( zipWith (:) productFirstColumn productO
     productOfSubmatrices = (multiplyMat (tail m1) (map tail m2))
 
     multiplyTwoLines :: Line -> Line -> Int
-    multiplyTwoLines l1 = sum . zipWith (*) l1 -- how can we skip the first argument also?
+    --multiplyTwoLines l1 = sum . zipWith (*) l1 -- how can we skip the first argument too?
+    multiplyTwoLines l1 l2 = sum . zipWith (*) l1 l2
 
