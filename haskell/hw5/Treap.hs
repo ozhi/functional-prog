@@ -1,3 +1,11 @@
+{-
+    Treap data structure
+
+    How can this project be expanded:
+        * generalize Key type - (Eq key, Ord key)
+        * include a value field alongside the key
+-}
+
 module Treap (
     -- public functions:
     Treap(..),
@@ -17,8 +25,6 @@ module Treap (
     rightTreap,
 
     getRandom,
-    addWithPriority,
-    newAdd,
 
     safeRoot,
     safeLeftTreap,
@@ -28,22 +34,19 @@ module Treap (
     rotatedPrint
 ) where
 
-{-
-    Treap data structure
 
-    How can this project be expanded:
-        * generalize Key type - (Eq key, Ord key)
-        * include a value field alongside the key
--}
+import Data.Char
 
-{- Define data structure -}
+
+{- Define the Treap structure -}
 type Key      = Char
 type Priority = Int
 
 type Element = (Key, Priority) -- priority is a private implementation detail
 data Treap = EmptyTreap | Treap Element Treap Treap -- deriving show?
 
-{- Information -}
+
+{- Get Treap elements -}
 empty :: Treap -> Bool
 empty EmptyTreap = True
 empty _          = False
@@ -69,56 +72,63 @@ safeRightTreap :: Treap -> Maybe Treap
 safeRightTreap EmptyTreap             = Nothing
 safeRightTreap (Treap _ _ rightTreap) = Just rightTreap
 
+create :: Key -> Priority -> Treap -> Treap -> Treap
+create key priority leftTreap rightTreap =
+    (Treap (key, priority) leftTreap rightTreap)
+
+
+
+
+{- Manipulate a Treap -}
+add :: Treap -> Key -> Priority -> Treap
+add EmptyTreap key priority =
+    create key priority EmptyTreap EmptyTreap
+
+add treap@(Treap (key, priority) leftTreap rightTreap) newKey newPriority
+    | newKey == key = treap
+    | newKey  < key = fixLeftPriority  $ create newKey newPriority (add leftTreap newKey newPriority)  rightTreap
+    | newKey  > key = fixRightPriority $ create newKey newPriority  leftTreap               (add rightTreap newKey newPriority)
+
+
+fixLeftPriority :: Treap -> Treap --fixLeftPriority EmptyTreap = EmptyTreap -- if it tursn out this case is necessary an "unexhaustive pattern list" error will be produced
+fixLeftPriority treap@(Treap (key, priority) leftTreap rightTreap) = 
+    if treap `hasPriorityNotSmallerThan` leftTreap
+    then treap
+    else treap -- createWithPriority k p () rightTreap
+
+fixRightPriority :: Treap -> Treap
+fixRightPriority treap@(Treap (key, priority) leftTreap rightTreap) = 
+    if treap `hasPriorityNotSmallerThan` rightTreap
+    then treap
+    else treap -- createWithPriority k p () rightTreap
+
+
+hasPriorityNotSmallerThan :: Treap -> Treap -> Bool -- matching pattern is not exhaustive, first argument is never supposed to be an EmptyTreap
+hasPriorityNotSmallerThan _ EmptyTreap = True
+hasPriorityNotSmallerThan (Treap (_, p1) _ _) (Treap (_, p2) _ _) = (p1 >= p2)
+
+
+
+
+
+
+
+contains :: Treap -> Key -> Bool
+contains EmptyTreap _ = False
+contains (Treap (key, _) leftTreap rightTreap) keyToFind
+    | keyToFind == key = True
+    | keyToFind <  key = contains leftTreap  keyToFind
+    | keyToFind >  key = contains rightTreap keyToFind 
+
+
+
+{- Utilities -}
 getRandom :: IO (Int) -- private -- simulates random numbers for now
 getRandom = do
     putStr "Input a random number: "
     jar <- readLn
-    return (myInt :: Int)
+    return (jar :: Int)
 
-{- Manipulation -}
-add :: Treap -> Key -> Treap
-add EmptyTreap key = create key EmptyTreap EmptyTreap
-add treap@(Treap (key, _) leftTreap rightTreap) keyToAdd
-    | keyToAdd == key = treap
-    | keyToAdd  < key = create key (leftTreap `add` keyToAdd) rightTreap
-    | keyToAdd  > key = create key leftTreap (rightTreap `add` keyToAdd)
-
-{-
-addWithPriority :: Treap -> Key -> Priority -> Treap
-addWithPriority EmptyTreap key priority = create key EmptyTreap EmptyTreap
-add treap@(Treap (key, _) leftTreap rightTreap) keyToAdd
-    | keyToAdd == key = treap
-    | keyToAdd  < key = create key (leftTreap `add` keyToAdd) rightTreap
-    | keyToAdd  > key = create key leftTreap (rightTreap `add` keyToAdd)
--}
---newAdd :: Treap -> Key -> IO (Treap)
---newAdd 
-
-contains :: Treap -> Key -> Bool
-contains EmptyTreap _ = False
-contains (Treap (key, priority) leftTreap rightTreap) keyToFind
-    | keyToFind == key = True
-    | keyToFind <  key = contains leftTreap  keyToFind
-    | keyToFind >  key = contains rightTreap keyToFind
-
-toList :: Treap -> [Key]
-toList EmptyTreap = []
-toList (Treap (key, _) leftTreap rightTreap) =
-    (toList leftTreap) ++ key : (toList rightTreap) 
-
-{-
-delete :: Treap -> Key -> Treap
-delete EmptyTreap _ = EmptyTreap
-delete (Treap (key, _) leftTreap rightTreap) keyToDelete
-    | keyToDelete == key = 
-    | keyToDelete  < key = create key (leftTreap `delete` key) rightTreap 
-    | keyToDelete  > key = create key leftTreap (rightTreap `delete` key)
--}
-
-create :: Key -> Treap -> Treap -> Treap
-create key leftTreap rightTreap = (Treap (key, 0) leftTreap rightTreap)
-
-{- Printing -}
 flatten :: Treap -> String
 flatten EmptyTreap = ""
 flatten (Treap (key, _) leftTreap rightTreap) =
@@ -132,10 +142,24 @@ rotatedPrint treap = helper treap 3
     helper (Treap (key, _) leftTreap rightTreap) indent =
         (helper  leftTreap (indent + 3)) ++
         (take indent $ repeat ' ')       ++ key  : "\n" ++
-        (helper rightTreap (indent + 3))        
+        (helper rightTreap (indent + 3))
+
+rotatedPrintWithPriority :: Treap -> String -- only works if priorities are digits
+rotatedPrintWithPriority treap = helper treap 3
+    where
+    helper :: Treap -> Int -> String
+    helper EmptyTreap _ = ""
+    helper (Treap (key, priority) leftTreap rightTreap) indent =
+        (helper  leftTreap (indent + 3)) ++
+        (take indent $ repeat ' ')       ++ "(" ++ key : ", " ++ (intToDigit priority) : ")\n" ++
+        (helper rightTreap (indent + 3))
+
+
+
+toList :: Treap -> [Key]
+toList EmptyTreap = []
+toList (Treap (key, _) leftTreap rightTreap) =
+    (toList leftTreap) ++ key : (toList rightTreap)
 
 instance Show Treap where
-    show treap = rotatedPrint treap
-
---getRandom :: Int -> [Int]
---getRandom seed = head . randomRs (0, 99) . mkStdGen $ seed
+    show treap = rotatedPrintWithPriority treap
