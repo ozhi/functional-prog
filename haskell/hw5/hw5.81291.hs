@@ -1,20 +1,42 @@
 import Treap
 
+printLines :: IO ()
+printLines = do
+    putStrLn ""
+    putStrLn ""
+    putStrLn ""
+    putStrLn ""
+
+r :: Int
+
 main :: IO()
 main = do
-    print "zdr world, kp"
 
-    print treap
-    print $ toList treap
+    print treap2
 
     where
-        treap = create
-                    '6' 1
-                    (create
-                        '3' 1
-                        (create '2' 1 EmptyTreap EmptyTreap)
-                        (create '4' 1 EmptyTreap EmptyTreap))
-                    (create
-                        '8' 1
-                        (create '7' 1 EmptyTreap EmptyTreap)
-                        (create '9' 1 EmptyTreap EmptyTreap))
+        treap = exampleTreap
+
+{-        treap2 =
+            (add
+            (add
+            (add
+            (add
+            (add
+            (add
+            (add
+            (add
+            (add EmptyTreap '1' 150)
+            '2' 180)
+            '3' 140)
+            '4' 120)
+            '5' 140)
+            '6' 160)
+            '7' 190)
+            '8' 110)
+            '9' 170) -}
+
+        treap2 =
+            (add (add (add (add (add (add (add (add (add
+                EmptyTreap
+                '1') '2') '3') '4') '5') '6') '7') '8') '9')

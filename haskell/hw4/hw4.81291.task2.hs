@@ -1,11 +1,8 @@
-type Line = [Int]
-type Matrix = [Line]
-
-transpose :: Matrix -> Matrix
+transpose :: [[a]] -> [[a]]
 transpose [l1] = zipWith (:) l1 (repeat [])
 transpose mat = zipWith (:) (head mat) (transpose (tail mat))   
 
-matrixInfList :: Matrix -> [Int]
+matrixInfList :: [[a]] -> [a]
 matrixInfList mat = (foldl1 (++) (transpose mat)) ++ (matrixInfList mat)
 
 main :: IO()
