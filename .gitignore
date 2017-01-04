@@ -1,2 +1,7 @@
 haskell-the-craft-of-functional-programming-2nd-edition.9780201342758.23997.pdf
 Programming in Haskell.pdf
+
+*.hi
+*.o
+*.odt
+
