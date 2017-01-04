@@ -17,6 +17,7 @@ module TreapIO (
 ) where
 
 import qualified Treap
+import System.Random
 
 toIoTreap :: Treap.Treap -> IO (Treap.Treap)
 toIoTreap treap = return (treap)
@@ -30,8 +31,10 @@ ioEmpty ioTreap = do
 
 ioAdd :: IO (Treap.Treap) -> Treap.Key -> IO (Treap.Treap)
 ioAdd ioTreap key = do
-    priority <- getRandomInt
     treap <- ioTreap
+    randomGenerator <- newStdGen
+    let (priority, _) = (randomR (1,10000) randomGenerator) :: (Int, StdGen)
+    -- print priority
     return (treap `Treap.addElement` (key, priority))
 
 ioContains :: IO (Treap.Treap) -> Treap.Key -> IO (Bool)
@@ -62,15 +65,3 @@ printRotated ioTreap = do
         indentStep     = 3
         showEmptyTreap = False
         showPriority   = False
-
-
-
-{-
-    Utilities
--}
-
-getRandomInt :: IO (Int)
-getRandomInt = do
-    putStr "Input a random number: "
-    jar <- readLn
-    return (jar :: Int)

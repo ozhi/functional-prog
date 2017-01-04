@@ -12,9 +12,6 @@ main :: IO()
 main = do
 
     printRotated treap
-    printRotated treap
-
-    print $ empty EmptyTreap
 
     where
         treap =
