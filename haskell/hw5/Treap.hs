@@ -2,12 +2,11 @@
     Treap data structure
 
     How can this project be expanded:
-        * generalize Key type - (Eq key, Ord key)
         * include a value field alongside the key
 -}
 
 module Treap (
-    Treap(EmptyTreap),
+    Treap(EmptyTreap), -- only the EmptyTreap constructor is publicly exported
     Key,
     -- Priority is not exported because it is an implementation detail ot the data structure
 
