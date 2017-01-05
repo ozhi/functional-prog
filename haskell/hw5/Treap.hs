@@ -26,24 +26,24 @@ module Treap (
     Define the Treap structure
 -}
 
-data Key a = MakeKey a
+type Key a = a
 type Priority = Int
-type Element a = (MakeKey a, Priority)
+type Element a = (Key a, Priority)
 
-data Treap = EmptyTreap | MakeTreap Element Treap Treap
+data Treap a = EmptyTreap | Treap (Element a) (Treap a) (Treap a)
 
 
 {-
     Define the four basic Treap fucntions --publicly exported
 -}
 
-empty :: Treap -> Bool
+empty :: Treap a -> Bool
 empty EmptyTreap = True
 empty _          = False
 
 
 
-addElement :: Treap -> Element -> Treap
+addElement :: (Eq a, Ord a) => Treap a -> Element a -> Treap a
 addElement EmptyTreap (key, priority) = Treap (key, priority) EmptyTreap EmptyTreap
 
 addElement treap@(Treap (rootKey, rootPriority) leftTreap rightTreap) (newKey, newPriority)
@@ -53,7 +53,7 @@ addElement treap@(Treap (rootKey, rootPriority) leftTreap rightTreap) (newKey, n
 
 
 
-contains :: Treap -> Key -> Bool
+contains :: (Eq a, Ord a) => Treap a -> Key a -> Bool
 contains EmptyTreap _ = False
 contains (Treap (rootKey,_) leftTreap rightTreap) keyToFind
     | keyToFind == rootKey = True
@@ -62,7 +62,7 @@ contains (Treap (rootKey,_) leftTreap rightTreap) keyToFind
 
 
 
-delete :: Treap -> Key -> Treap
+delete :: (Ord a) => Treap a -> Key a -> Treap a
 delete EmptyTreap _ = EmptyTreap
 
 delete (Treap (rootKey, rootPriority) leftTreap rightTreap) keyToDelete
@@ -92,22 +92,22 @@ delete (Treap _
     Define additional Treap fucntions --publicly exported
 -}
 
-toList :: Treap -> [Key]
+toList :: Treap a -> [Key a]
 toList EmptyTreap = []
 toList (Treap (key, _) leftTreap rightTreap) =
     (toList leftTreap) ++ key : (toList rightTreap)
 
-toString :: Treap -> String
+toString :: (Show a) => Treap a-> String
 toString EmptyTreap = ""
 toString (Treap (key, _) leftTreap rightTreap) =
     (toString leftTreap) ++ (show key) ++ (toString rightTreap)
 
 
 
-rotateToString :: Treap -> Int -> Bool -> Bool -> String -- treap -> indentStep -> showEmptyTreap -> showPriority
+rotateToString :: (Show a) => Treap a -> Int -> Bool -> Bool -> String -- treap -> indentStep -> showEmptyTreap -> showPriority
 rotateToString treap indentStep = helper indentStep treap indentStep -- add totalIdent as first argument    
     where
-        helper :: Int -> Treap -> Int -> Bool -> Bool -> String
+        helper :: (Show a) => Int -> Treap a -> Int -> Bool -> Bool -> String
         helper _ EmptyTreap _ True  _ = " ." ++ "\n"
         helper _ EmptyTreap _ False _ = ""
         helper totalIndent (Treap (key, priority) leftTreap rightTreap) indentStep showEmptyTreap showPriority =
@@ -120,7 +120,7 @@ rotateToString treap indentStep = helper indentStep treap indentStep -- add tota
 
                 ++ (helper (totalIndent + indentStep) rightTreap indentStep showEmptyTreap showPriority)
 
-instance Show Treap where
+instance (Show a) => Show (Treap a) where
     show treap =
         let indentStep     = 3
             showEmptyTreap = False
@@ -133,17 +133,17 @@ instance Show Treap where
     Define Treap helper functions --privately used in the module
 -}
 
-leftMost :: Treap -> Element
+leftMost :: Treap a -> Element a
 leftMost (Treap element EmptyTreap _) = element
 leftMost (Treap       _ leftTreap  _) = leftMost leftTreap
 
-rightMost :: Treap -> Element
+rightMost :: Treap a -> Element a
 rightMost (Treap element _ EmptyTreap) = element
 rightMost (Treap       _ _ rightTreap) = rightMost rightTreap
 
 
 
-fixLeftPriority :: Treap -> Treap --standart right tree rotation --used to maintain heap properties
+fixLeftPriority :: Treap a -> Treap a --standart right tree rotation --used to maintain heap properties
 fixLeftPriority treap@(Treap _ EmptyTreap _) = treap
 fixLeftPriority treap@(Treap (rootK, rootP)
                         left@(Treap (leftK, leftP) leftLeft rightLeft)
@@ -152,7 +152,7 @@ fixLeftPriority treap@(Treap (rootK, rootP)
     then treap
     else Treap (leftK, leftP) leftLeft (Treap (rootK, rootP) rightLeft right)
 
-fixRightPriority :: Treap -> Treap --standart right tree rotation --used to maintain heap properties
+fixRightPriority :: Treap a -> Treap a --standart right tree rotation --used to maintain heap properties
 fixRightPriority treap@(Treap (_,_) _ EmptyTreap) = treap
 fixRightPriority treap@(Treap (rootK, rootP)
                         left
@@ -167,33 +167,33 @@ fixRightPriority treap@(Treap (rootK, rootP)
     Define additional Treap functions --not intended for public use
 -}
 
-height :: Treap -> Int
+height :: Treap a -> Int
 height EmptyTreap = 0
 height (Treap _ leftTreap rightTreap) = 1 + max (height leftTreap) (height leftTreap)
 
 
 
-root :: Treap -> Key
+root :: Treap a -> Key a
 root (Treap (key, _) _ _) = key
 
-leftTreap :: Treap -> Treap
+leftTreap :: Treap a -> Treap a
 leftTreap (Treap _ leftTreap _) = leftTreap
 
-rightTreap :: Treap -> Treap
+rightTreap :: Treap a -> Treap a
 rightTreap (Treap _ _ rightTreap) = rightTreap
 
 {-
     root / leftTreap / rightTreap are not defined for an EmptyTreap
     If they were public functions we could define safely in the following way
 -}
-safeRoot :: Treap -> Maybe Key
+safeRoot :: Treap a -> Maybe (Key a)
 safeRoot EmptyTreap           = Nothing
 safeRoot (Treap (key, _) _ _) = Just key
 
-safeLeftTreap :: Treap -> Maybe Treap
+safeLeftTreap :: Treap a -> Maybe (Treap a)
 safeLeftTreap EmptyTreap            = Nothing
 safeLeftTreap (Treap _ leftTreap _) = Just leftTreap
 
-safeRightTreap :: Treap -> Maybe Treap
+safeRightTreap :: Treap a -> Maybe (Treap a)
 safeRightTreap EmptyTreap             = Nothing
 safeRightTreap (Treap _ _ rightTreap) = Just rightTreap
