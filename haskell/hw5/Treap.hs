@@ -26,11 +26,11 @@ module Treap (
     Define the Treap structure
 -}
 
-type Key      = Char
+data Key a = MakeKey a
 type Priority = Int
-type Element = (Key, Priority)
+type Element a = (MakeKey a, Priority)
 
-data Treap = EmptyTreap | Treap Element Treap Treap
+data Treap = EmptyTreap | MakeTreap Element Treap Treap
 
 
 {-
