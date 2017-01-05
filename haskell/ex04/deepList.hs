@@ -5,9 +5,9 @@ main = do
     let dl1 = (Many[
                 (Many[
                     (One 1),
-                    (Many [
+                    (Many[
                         (One 2),
-                        (Many [
+                        (Many[
                             (One 3),
                             (One 4)])])]), 
                 (Many[
@@ -36,8 +36,6 @@ main = do
 
     print $ Main.union dl1 dl2
     print $ Main.intersect dl1 dl2
-
-
 
 data DeepList = None | One Int | Many [DeepList]
 
