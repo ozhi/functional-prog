@@ -1,16 +1,25 @@
+{-
+    Bozhin Katsarski
+    fn 81291
+    11.Jan.17
+-}
+
 import Treap
 import TreapIO
 
 main :: IO ()
 main = do
-	testTreapOfDifferentTypes
-	testTreapIO
+    print "Hello"
+    -- testTreapOfDifferentTypes
+    -- testTreapIO
+    -- compareSameVsRandomPriorities
 
 testTreapOfDifferentTypes :: IO ()
 testTreapOfDifferentTypes = do
-print charTreap
+    putStrLn $ "\n\n" ++ "testTreapOfDifferentTypes"
+
+    print charTreap
     print intTreap
-    print errorTreap
 
     where
         charTreap =
@@ -37,15 +46,36 @@ print charTreap
                 `addElement` (9, 84)
                 `addElement` (5, 33)
 
-        errorTreap = EmptyTreap `addElement` (3  , 45) `addElement` ('C', 96)
+        -- errorTreap = EmptyTreap `addElement` (3  , 45) `addElement` ('C', 96)
+
+
 
 testTreapIO :: IO ()
 testTreapIO = do
+    printRotated $
+        (toIoTreap EmptyTreap)
+            `ioAdd` 1
+            `ioAdd` 2
+            `ioAdd` 3
+            `ioAdd` 4
+            `ioDelete` 17
+            `ioDelete` 2
+            `ioDelete` 3
 
-    printRotated treap
 
-    where
-        treap =
-            (ioAdd (ioAdd (ioAdd (ioAdd (ioAdd (ioAdd (ioAdd (ioAdd (ioAdd
-                (toIoTreap EmptyTreap)
-                '1') '2') '3') '4') '5') '6') '7') '8') '9')
+
+compareSameVsRandomPriorities :: IO ()
+compareSameVsRandomPriorities = do
+    putStrLn $ "\n\n" ++ "compareSameVsRandomPriorities"
+
+    print        $ getTreap   20
+    printRotated $ getIOTreap 20
+
+    where        
+        getTreap :: Int -> Treap Int
+        getTreap 0 = EmptyTreap
+        getTreap n = getTreap (n-1) `addElement` (n, 1)
+
+        getIOTreap :: Int -> IO (Treap Int)
+        getIOTreap 0 = toIoTreap EmptyTreap
+        getIOTreap n = getIOTreap (n-1) `ioAdd` n

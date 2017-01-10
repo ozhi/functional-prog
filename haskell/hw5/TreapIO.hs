@@ -1,6 +1,12 @@
 {-
+    Bozhin Katsarski
+    fn 81291
+    11.Jan.17
+-}
+
+{-
     TreapIO is build ontop of Treap to provide random priorities
-    at the cost of everything being in IO (unpure) functions
+    at the cost of all functions being IO (unpure)
 -}
 
 module TreapIO (
@@ -19,45 +25,49 @@ module TreapIO (
 import qualified Treap
 import System.Random
 
-toIoTreap :: Treap.Treap -> IO (Treap.Treap)
+
+
+
+toIoTreap :: Treap.Treap a -> IO (Treap.Treap a)
 toIoTreap treap = return (treap)
 
 
 
-ioEmpty :: IO (Treap.Treap) -> IO (Bool)
+ioEmpty :: IO (Treap.Treap a) -> IO (Bool)
 ioEmpty ioTreap = do
     treap <- ioTreap
     return (Treap.empty treap)
 
-ioAdd :: IO (Treap.Treap) -> Treap.Key -> IO (Treap.Treap)
-ioAdd ioTreap key = do
-    treap <- ioTreap
-    randomGenerator <- newStdGen
-    let (priority, _) = (randomR (1,10000) randomGenerator) :: (Int, StdGen)
-    -- print priority
-    return (treap `Treap.addElement` (key, priority))
-
-ioContains :: IO (Treap.Treap) -> Treap.Key -> IO (Bool)
+ioContains :: (Eq a, Ord a) => IO (Treap.Treap a) -> Treap.Key a -> IO (Bool)
 ioContains ioTreap key = do
     treap <- ioTreap
     return (Treap.contains treap key)
 
-ioDelete :: IO (Treap.Treap) -> Treap.Key -> IO (Treap.Treap)
+ioAdd :: (Ord a) => IO (Treap.Treap a) -> Treap.Key a -> IO (Treap.Treap a)
+ioAdd ioTreap key = do
+    treap <- ioTreap
+    randomGenerator <- newStdGen
+    let (priority, _) = (randomR (1,10000) randomGenerator) :: (Int, StdGen)
+    return (treap `Treap.addElement` (key, priority))
+
+ioDelete :: (Ord a) => IO (Treap.Treap a) -> Treap.Key a -> IO (Treap.Treap a)
 ioDelete ioTreap key = do
     treap <- ioTreap
     return (Treap.delete treap key)
 
-printAsString :: IO (Treap.Treap) -> IO ()
+
+
+printAsString :: (Show a) => IO (Treap.Treap a) -> IO ()
 printAsString ioTreap = do
     treap <- ioTreap
     putStrLn $ Treap.toString treap
 
-printAsList :: IO (Treap.Treap) -> IO ()
+printAsList :: (Show a) => IO (Treap.Treap a) -> IO ()
 printAsList ioTreap = do
     treap <- ioTreap
     print $ Treap.toList treap
 
-printRotated :: IO (Treap.Treap) -> IO ()
+printRotated :: (Show a) => IO (Treap.Treap a) -> IO ()
 printRotated ioTreap = do
     treap <- ioTreap
     putStrLn $ Treap.rotateToString treap indentStep showEmptyTreap showPriority

@@ -1,8 +1,15 @@
 {-
+    Bozhin Katsarski
+    fn 81291
+    11.Jan.17
+-}
+
+{-
     Treap data structure
 
     How can this project be expanded:
         * include a value field alongside the key
+        * define TreapIO's show function
 -}
 
 module Treap (
@@ -20,13 +27,7 @@ module Treap (
     rotateToString
 ) where
 
-{-
-useless changes are removed
--}
-
-{-
-    Define the Treap structure
--}
+{- Define the Treap structure -}
 
 type Key a = a
 type Priority = Int
@@ -35,13 +36,21 @@ type Element a = (Key a, Priority)
 data Treap a = EmptyTreap | Treap (Element a) (Treap a) (Treap a)
 
 
-{-
-    Define the four basic Treap fucntions --publicly exported
--}
+
+{- Define the four basic Treap fucntions -} -- Publicly exported
 
 empty :: Treap a -> Bool
 empty EmptyTreap = True
 empty _          = False
+
+
+
+contains :: (Eq a, Ord a) => Treap a -> Key a -> Bool
+contains EmptyTreap _ = False
+contains (Treap (rootKey,_) leftTreap rightTreap) keyToFind
+    | keyToFind == rootKey = True
+    | keyToFind <  rootKey = leftTreap  `contains` keyToFind
+    | keyToFind >  rootKey = rightTreap `contains` keyToFind
 
 
 
@@ -52,15 +61,6 @@ addElement treap@(Treap (rootKey, rootPriority) leftTreap rightTreap) (newKey, n
     | newKey == rootKey = treap
     | newKey  < rootKey = fixLeftPriority  (Treap (rootKey, rootPriority) (addElement leftTreap (newKey, newPriority))  rightTreap)
     | newKey  > rootKey = fixRightPriority (Treap (rootKey, rootPriority)  leftTreap (addElement rightTreap (newKey, newPriority)))
-
-
-
-contains :: (Eq a, Ord a) => Treap a -> Key a -> Bool
-contains EmptyTreap _ = False
-contains (Treap (rootKey,_) leftTreap rightTreap) keyToFind
-    | keyToFind == rootKey = True
-    | keyToFind <  rootKey = leftTreap  `contains` keyToFind
-    | keyToFind >  rootKey = rightTreap `contains` keyToFind
 
 
 
@@ -90,14 +90,14 @@ delete (Treap _
 
 
 
-{-
-    Define additional Treap fucntions --publicly exported
--}
+{- Define additional Treap fucntions --publicly exported -} -- Publicly exported
 
 toList :: Treap a -> [Key a]
 toList EmptyTreap = []
 toList (Treap (key, _) leftTreap rightTreap) =
     (toList leftTreap) ++ key : (toList rightTreap)
+
+
 
 toString :: (Show a) => Treap a-> String
 toString EmptyTreap = ""
@@ -107,7 +107,7 @@ toString (Treap (key, _) leftTreap rightTreap) =
 
 
 rotateToString :: (Show a) => Treap a -> Int -> Bool -> Bool -> String -- treap -> indentStep -> showEmptyTreap -> showPriority
-rotateToString treap indentStep = helper indentStep treap indentStep -- add totalIdent as first argument    
+rotateToString treap indentStep = helper indentStep treap indentStep -- use totalIdent as first argument    
     where
         helper :: (Show a) => Int -> Treap a -> Int -> Bool -> Bool -> String
         helper _ EmptyTreap _ True  _ = " ." ++ "\n"
@@ -131,9 +131,7 @@ instance (Show a) => Show (Treap a) where
 
 
 
-{-
-    Define Treap helper functions --privately used in the module
--}
+{- Define Treap helper functions -} -- Privately used in the module
 
 leftMost :: Treap a -> Element a
 leftMost (Treap element EmptyTreap _) = element
@@ -144,8 +142,8 @@ rightMost (Treap element _ EmptyTreap) = element
 rightMost (Treap       _ _ rightTreap) = rightMost rightTreap
 
 
-
-fixLeftPriority :: Treap a -> Treap a --standart right tree rotation --used to maintain heap properties
+--standart right tree rotation --used to maintain heap properties
+fixLeftPriority :: Treap a -> Treap a
 fixLeftPriority treap@(Treap _ EmptyTreap _) = treap
 fixLeftPriority treap@(Treap (rootK, rootP)
                         left@(Treap (leftK, leftP) leftLeft rightLeft)
@@ -154,7 +152,8 @@ fixLeftPriority treap@(Treap (rootK, rootP)
     then treap
     else Treap (leftK, leftP) leftLeft (Treap (rootK, rootP) rightLeft right)
 
-fixRightPriority :: Treap a -> Treap a --standart right tree rotation --used to maintain heap properties
+--standart left tree rotation --used to maintain heap properties
+fixRightPriority :: Treap a -> Treap a
 fixRightPriority treap@(Treap (_,_) _ EmptyTreap) = treap
 fixRightPriority treap@(Treap (rootK, rootP)
                         left
@@ -162,40 +161,3 @@ fixRightPriority treap@(Treap (rootK, rootP)
     if rootP >= rightP
     then treap
     else Treap (rightK, rightP) (Treap (rootK, rootP) left leftRight) rightRight
-
-
-
-{-
-    Define additional Treap functions --not intended for public use
--}
-
-height :: Treap a -> Int
-height EmptyTreap = 0
-height (Treap _ leftTreap rightTreap) = 1 + max (height leftTreap) (height leftTreap)
-
-
-
-root :: Treap a -> Key a
-root (Treap (key, _) _ _) = key
-
-leftTreap :: Treap a -> Treap a
-leftTreap (Treap _ leftTreap _) = leftTreap
-
-rightTreap :: Treap a -> Treap a
-rightTreap (Treap _ _ rightTreap) = rightTreap
-
-{-
-    root / leftTreap / rightTreap are not defined for an EmptyTreap
-    If they were public functions we could define safely in the following way
--}
-safeRoot :: Treap a -> Maybe (Key a)
-safeRoot EmptyTreap           = Nothing
-safeRoot (Treap (key, _) _ _) = Just key
-
-safeLeftTreap :: Treap a -> Maybe (Treap a)
-safeLeftTreap EmptyTreap            = Nothing
-safeLeftTreap (Treap _ leftTreap _) = Just leftTreap
-
-safeRightTreap :: Treap a -> Maybe (Treap a)
-safeRightTreap EmptyTreap             = Nothing
-safeRightTreap (Treap _ _ rightTreap) = Just rightTreap
