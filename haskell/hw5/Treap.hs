@@ -8,7 +8,7 @@
 module Treap (
     Treap(EmptyTreap), -- only the EmptyTreap constructor is publicly exported
     Key,
-    -- Priority is not exported because it is an implementation detail ot the data structure
+    -- Priority is not exported because it is a private detail of the data structure
 
     empty,
     contains,
