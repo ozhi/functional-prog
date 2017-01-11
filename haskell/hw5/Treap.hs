@@ -19,7 +19,7 @@ module Treap (
 
     empty,
     contains,
-    addElement,
+    add,
     delete,
 
     toList,
@@ -54,13 +54,13 @@ contains (Treap (rootKey,_) leftTreap rightTreap) keyToFind
 
 
 
-addElement :: (Eq a, Ord a) => Treap a -> Element a -> Treap a
-addElement EmptyTreap (key, priority) = Treap (key, priority) EmptyTreap EmptyTreap
+add :: (Eq a, Ord a) => Treap a -> Element a -> Treap a
+add EmptyTreap (key, priority) = Treap (key, priority) EmptyTreap EmptyTreap
 
-addElement treap@(Treap (rootKey, rootPriority) leftTreap rightTreap) (newKey, newPriority)
+add treap@(Treap (rootKey, rootPriority) leftTreap rightTreap) (newKey, newPriority)
     | newKey == rootKey = treap
-    | newKey  < rootKey = fixLeftPriority  (Treap (rootKey, rootPriority) (addElement leftTreap (newKey, newPriority))  rightTreap)
-    | newKey  > rootKey = fixRightPriority (Treap (rootKey, rootPriority)  leftTreap (addElement rightTreap (newKey, newPriority)))
+    | newKey  < rootKey = fixLeftPriority  (Treap (rootKey, rootPriority) (leftTreap `add` (newKey, newPriority))  rightTreap)
+    | newKey  > rootKey = fixRightPriority (Treap (rootKey, rootPriority)  leftTreap (rightTreap `add` (newKey, newPriority)))
 
 
 

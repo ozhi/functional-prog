@@ -48,7 +48,7 @@ ioAdd ioTreap key = do
     treap <- ioTreap
     randomGenerator <- newStdGen
     let (priority, _) = (randomR (1,10000) randomGenerator) :: (Int, StdGen)
-    return (treap `Treap.addElement` (key, priority))
+    return (treap `Treap.add` (key, priority))
 
 ioDelete :: (Ord a) => IO (Treap.Treap a) -> Treap.Key a -> IO (Treap.Treap a)
 ioDelete ioTreap key = do
