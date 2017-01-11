@@ -3,5 +3,7 @@ Programming in Haskell.pdf
 
 *.hi
 *.o
-*.odt
+
+haskell/hw5/*.odt
+haskell/hw5/*.pdf
 

@@ -10,8 +10,13 @@ import TreapIO
 main :: IO ()
 main = do
     print "Hello"
+
     testTreapOfDifferentTypes
+
+    testPrintRepresentations
+    
     testTreapIO
+    
     compareSameVsRandomPriorities
 
 testTreapOfDifferentTypes :: IO ()
@@ -48,7 +53,23 @@ testTreapOfDifferentTypes = do
 
         -- errorTreap = EmptyTreap `addElement` (3  , 45) `addElement` ('C', 96)
 
+testPrintRepresentations :: IO ()
+testPrintRepresentations = do
+    putStrLn $ "\n\n" ++ "testPrintRepresentations"
 
+    let treap = (toIoTreap EmptyTreap)
+                    `ioAdd` 1
+                    `ioAdd` 2
+                    `ioAdd` 3
+                    `ioAdd` 4
+                    `ioAdd` 5
+                    `ioAdd` 6
+                    `ioAdd` 7
+                    `ioAdd` 8
+                    `ioAdd` 9
+
+    printAsString treap
+    printAsList   treap
 
 testTreapIO :: IO ()
 testTreapIO = do
