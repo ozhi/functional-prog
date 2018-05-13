@@ -6,7 +6,7 @@
 
 {-
     TreapIO is build ontop of Treap to provide random priorities
-    at the cost of all functions being IO (unpure)
+    at the cost of all functions being IO (not pure)
 -}
 
 module TreapIO (
